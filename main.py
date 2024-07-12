@@ -31,6 +31,17 @@ class Student:
         """Метод для сравнения средних оценок студентов."""
         return self.average_mark() < other.average_mark()
 
+    def rate_lecturer(self, student, course, grade, lecturer):
+        """Метод для выставления оценок лекторам."""
+        if (isinstance(lecturer, Lecturer) and course in lecturer.courses_attached
+                and course in student.courses_in_progress):
+            if course in lecturer.grades:
+                lecturer.grades[course] += [grade]
+            else:
+                lecturer.grades[course] = [grade]
+        else:
+            return 'Ошибка'
+
 
 class Mentor:
     def __init__(self, name, surname):
@@ -46,17 +57,6 @@ class Lecturer(Mentor):
         """Метод для инициализации атрибутов для лекторов."""
         super().__init__(name, surname)
         self.grades = {}
-
-    def get_grades(self, student, course, grade, lector):
-        """Метод для выставления оценок лекторам."""
-        if (isinstance(student, Student) and isinstance(lector, Lecturer) and course in self.courses_attached
-                and course in student.courses_in_progress):
-            if course in lector.grades:
-                lector.grades[course] += [grade]
-            else:
-                lector.grades[course] = [grade]
-        else:
-            return 'Ошибка'
 
     def average_mark(self):
         """Метод вычисляет среднюю оценку лектора."""
@@ -117,12 +117,8 @@ student_anna.finished_courses += ['HTML', 'CSS']
 student_anna.courses_in_progress += ['JavaScript', 'Python']
 
 lecturer_petr.courses_attached += ['Python', 'Java']
-lecturer_petr.get_grades(student_ivan, 'Python', 10, lecturer_petr)
-lecturer_petr.get_grades(student_ivan, 'Java', 8, lecturer_petr)
 
 lecturer_pavel.courses_attached += ['JavaScript', 'Python']
-lecturer_pavel.get_grades(student_anna, 'Python', 9, lecturer_pavel)
-lecturer_pavel.get_grades(student_anna, 'JavaScript', 9, lecturer_pavel)
 
 reviewer_dima.courses_attached += ['Python', 'Java']
 reviewer_dima.rate_hw(student_ivan, 'Python', 9)
@@ -131,6 +127,12 @@ reviewer_dima.rate_hw(student_ivan, 'Java', 8)
 reviewer_masha.courses_attached += ['JavaScript', 'Python']
 reviewer_masha.rate_hw(student_anna, 'JavaScript', 7)
 reviewer_masha.rate_hw(student_anna, 'Python', 8)
+
+student_ivan.rate_lecturer(student_ivan, 'Python', 10, lecturer_petr)
+student_ivan.rate_lecturer(student_ivan, 'Java', 8, lecturer_petr)
+student_anna.rate_lecturer(student_anna, 'Python', 8, lecturer_pavel)
+student_anna.rate_lecturer(student_anna, 'JavaScript', 9, lecturer_pavel)
+
 
 print(student_ivan, end='\n\n')
 print(student_anna, end='\n\n')
